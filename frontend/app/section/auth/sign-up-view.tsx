@@ -167,6 +167,9 @@ export function SignUpView() {
             <Button type='submit' disabled={isSubmitting} className='w-full'>
               {isSubmitting ? 'Submitting…' : 'Register'}
             </Button>
+            {errorMsg ? (
+              <p className='text-sm text-destructive'>{errorMsg}</p>
+            ) : null}
             <p>
               Back To LogIn?{' '}
               <a href={paths.auth.jwt.signIn} className='text-green-500'>
@@ -181,22 +184,6 @@ export function SignUpView() {
 
   return (
     <>
-      {errorMsg ? (
-        <Alert className='mb-4'>
-          <div className='flex items-start gap-3'>
-            <AlertCircleIcon className='h-5 w-5' />
-            <div>
-              <AlertTitle className='font-medium'>
-                Unable to process your request.
-              </AlertTitle>
-              <AlertDescription>
-                <p className='text-sm'>{errorMsg}</p>
-              </AlertDescription>
-            </div>
-          </div>
-        </Alert>
-      ) : null}
-
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </Form>

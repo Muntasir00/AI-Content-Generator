@@ -76,11 +76,16 @@ export function SignInView() {
         email: data.email,
         password: data.password,
       });
-      initSession?.(dataRes.user, dataRes.accessToken);
 
+      initSession?.(dataRes.user, dataRes.accessToken);
       router.push(paths.dashboard.root);
-    } catch (error) {
-      // ...
+    } catch (error: any) {
+      const errMsg =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Something went wrong!';
+
+      setErrorMsg(errMsg);
     }
   });
 
@@ -164,6 +169,10 @@ export function SignInView() {
                 SignUp
               </a>
             </p>
+
+            {errorMsg ? (
+              <p className='text-sm text-destructive'>{errorMsg}</p>
+            ) : null}
           </CardFooter>
         </Card>
       </div>
@@ -173,22 +182,6 @@ export function SignInView() {
   return (
     <>
       {/* Error alert */}
-      {errorMsg ? (
-        <Alert className='mb-4'>
-          <div className='flex items-start gap-3'>
-            <AlertCircleIcon className='h-5 w-5' />
-            <div>
-              <AlertTitle className='font-medium'>
-                Unable to process your request.
-              </AlertTitle>
-              <AlertDescription>
-                <p className='text-sm'>{errorMsg}</p>
-                <p className='text-sm'>Please check your Email and Password</p>
-              </AlertDescription>
-            </div>
-          </div>
-        </Alert>
-      ) : null}
 
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
