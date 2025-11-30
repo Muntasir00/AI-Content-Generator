@@ -1,3 +1,4 @@
+import type { changePassword } from '~/auth/context';
 import { paramCase } from '../utils/change-case';
 
 const ROOTS = {
@@ -18,6 +19,7 @@ export const paths = {
       forgotPassword: `${ROOTS.AUTH}/forgot-password`,
       verifyOtp: `${ROOTS.AUTH}/verify-otp`,
       verify_otp: `${ROOTS.AUTH}/verify-otp/:email`,
+      changePassword: `${ROOTS.AUTH}/change-password`,
     },
   },
 

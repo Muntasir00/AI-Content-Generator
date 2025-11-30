@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { paths } from 'app/routes/paths';
-import { useRouter } from 'app/routes/hooks';
+import { useRouter, useSearchParams } from 'app/routes/hooks';
 import { RouterLink } from 'app/routes/components';
 
 import { useBoolean } from 'app/hooks/use-boolean';
@@ -35,16 +35,17 @@ export type ChangePasswordInSchemaType = zod.infer<
   typeof ChangePasswordInSchema
 >;
 
-export const ChangePasswordInSchema = zod.object({
-  newPassword: zod
-    .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
-  confirmPassword: zod
-    .string()
-    .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
-});
+export const ChangePasswordInSchema = zod
+  .object({
+    newPassword: zod.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: zod
+      .string()
+      .min(6, 'Password must be at least 6 characters'),
+  })
+  .refine(data => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 // ----------------------------------------------------------------------
 
@@ -52,6 +53,9 @@ export function PasswordChangeView() {
   const router = useRouter();
 
   const { checkUserSession } = useAuthContext();
+  const { user } = useAuthContext();
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email') || '';
 
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -74,14 +78,19 @@ export function PasswordChangeView() {
   const onSubmit = handleSubmit(async data => {
     try {
       setErrorMsg('');
+
+      if (!email) {
+        throw new Error('Email is missing in URL');
+      }
+
       await changePassword({
+        email: email,
         newPassword: data.newPassword,
         confirmPassword: data.confirmPassword,
       });
-      await checkUserSession?.();
 
-      // refresh or navigate as needed
-      router.refresh();
+      // Redirect to login page after success
+      router.push(paths.auth.jwt.signIn);
     } catch (error) {
       console.error(error);
       setErrorMsg(error instanceof Error ? error.message : String(error));
@@ -146,6 +155,10 @@ export function PasswordChangeView() {
                   </p>
                 )}
               </div>
+              {/* Error alert */}
+              {errorMsg ? (
+                <p className='text-sm text-destructive'>{errorMsg}</p>
+              ) : null}
             </div>
           </CardContent>
 
@@ -161,24 +174,6 @@ export function PasswordChangeView() {
 
   return (
     <>
-      {/* Error alert */}
-      {errorMsg ? (
-        <Alert className='mb-4'>
-          <div className='flex items-start gap-3'>
-            <AlertCircleIcon className='h-5 w-5' />
-            <div>
-              <AlertTitle className='font-medium'>
-                Unable to process your request.
-              </AlertTitle>
-              <AlertDescription>
-                <p className='text-sm'>{errorMsg}</p>
-                <p className='text-sm'>Please check your Password</p>
-              </AlertDescription>
-            </div>
-          </div>
-        </Alert>
-      ) : null}
-
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
       </Form>

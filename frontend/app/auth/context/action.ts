@@ -87,41 +87,93 @@ export const signUp = async ({
  * ChangePassword
  *************************************** */
 export const changePassword = async ({
+  email,
   newPassword,
   confirmPassword,
-}: ChangePasswordParams): Promise<void> => {
+}: {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<boolean> => {
   try {
-    const params = { newPassword, confirmPassword };
+    const url = endpoints.auth.changePassword.replace(':email', email);
 
-    const res = await axios.post(endpoints.auth.signIn, params);
+    const res = await axios.post(url, {
+      newPassword,
+      confirmPassword,
+    });
 
-    const { accessToken } = res.data;
-
-    if (!accessToken) {
-      throw new Error('Access token not found in response');
+    if (res?.data?.success || res.status === 200 || res.status === 201) {
+      return true;
     }
 
-    setSession(accessToken);
-  } catch (error) {
-    console.error('Error during sign in:', error);
-    throw error;
+    throw new Error(res?.data?.message ?? 'Password change failed');
+  } catch (err: any) {
+    const message =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      err?.message ||
+      'Something went wrong!';
+    throw new Error(message);
   }
 };
 
 /** **************************************
- * Sign in
+ * forgot Password
  *************************************** */
 export const forgotPassword = async ({
   email,
-}: ForgotPasswordParams): Promise<{ success: boolean; message: string }> => {
+}: ForgotPasswordParams): Promise<{
+  success: boolean;
+  message?: string;
+  data?: any;
+}> => {
   try {
-    const params = { email };
-    const res = await axios.post(endpoints.auth.forgotPassword, params);
+    const res = await axios.post(endpoints.auth.forgotPassword, {
+      email,
+    });
 
-    return res.data;
-  } catch (error) {
-    console.error('Error during forgot password:', error);
-    throw error;
+    const body = res?.data ?? res;
+
+    return {
+      success: !!body.success,
+      message: body.message ?? '',
+      data: body.data ?? null,
+    };
+  } catch (err: any) {
+    const message =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      err?.message ||
+      'Something went wrong';
+    console.error('forgotPassword error', err);
+    return { success: false, message };
+  }
+};
+
+/** **************************************
+ * verify Otp
+ *************************************** */
+
+export const verifyOtp = async (email: string, otp: string) => {
+  try {
+    const url = endpoints.auth.verifyOtp.replace(':email', email);
+
+    const res = await axios.post(url, { otp });
+
+    return {
+      success: !!res?.data?.success,
+      message: res?.data?.message ?? 'OTP verified successfully!',
+      data: res?.data,
+    };
+  } catch (err: any) {
+    const message =
+      err?.response?.data?.message ||
+      err?.response?.data?.error ||
+      err?.message ||
+      'Something went wrong!';
+
+    return { success: false, message };
   }
 };
 
