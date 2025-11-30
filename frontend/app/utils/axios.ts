@@ -59,4 +59,8 @@ export const endpoints = {
     verifyOtp: '/user/verify-otp/:email',
     logout: '/user/logout',
   },
+  content: {
+    generate: '/app/generate',
+    status: (jobId: string) => `/app/status/${jobId}`,
+  },
 };
