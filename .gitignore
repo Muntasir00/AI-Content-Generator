@@ -4,3 +4,9 @@
 **/.env
 dump.rdb
 **/dump.rdb
+
+.vscode
+babel.json
+.vscode/settings.json
+
+.vscode/*
