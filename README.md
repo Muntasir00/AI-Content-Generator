@@ -13,6 +13,7 @@ This is a full-stack content generator with:
 ## 🔧 Tech Stack
 
 Frontend: React-Router dev
+State Management: Zustand
 Backend: Node.js, Express  
 Database: MongoDB (Mongoose)  
 Queue System: Redis + BullMQ  
