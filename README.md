@@ -26,7 +26,9 @@ AI Provider: OpenAI GPT-4o mini
 ### Backend
 
 cd backend
+
 npm i
+
 npm run dev
 
 Start Redis:
@@ -40,7 +42,9 @@ node worker.js
 ### Frontend
 
 cd frontend
+
 npm install
+
 npm run dev
 
 ---
