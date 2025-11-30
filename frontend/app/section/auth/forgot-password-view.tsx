@@ -5,25 +5,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { paths } from 'app/routes/paths';
 import { useRouter } from 'app/routes/hooks';
-import { RouterLink } from 'app/routes/components';
-
-import { useBoolean } from 'app/hooks/use-boolean';
 
 import { Form } from 'app/components/hook-form';
 
 import { useAuthContext } from 'app/auth/hooks';
 import { forgotPassword } from 'app/auth/context';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { AlertCircleIcon } from 'lucide-react';
 
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { Label } from '~/components/ui/label';
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -67,7 +60,12 @@ export function ForgotPasswordView() {
   const onSubmit = handleSubmit(async data => {
     try {
       setErrorMsg('');
+      // optional: disable button already handled by isSubmitting
+      console.log('Sending forgot password for', data.email);
+
       const res = await forgotPassword({ email: data.email });
+
+      console.log('forgotPassword response:', res);
 
       if (res.success) {
         router.push(`/auth/verify-otp?email=${encodeURIComponent(data.email)}`);
@@ -120,6 +118,9 @@ export function ForgotPasswordView() {
                   </p>
                 )}
               </div>
+              {errorMsg ? (
+                <p className='text-sm text-destructive'>{errorMsg}</p>
+              ) : null}
             </div>
           </CardContent>
 
@@ -142,22 +143,6 @@ export function ForgotPasswordView() {
   return (
     <>
       {/* Error alert */}
-      {errorMsg ? (
-        <Alert className='mb-4'>
-          <div className='flex items-start gap-3'>
-            <AlertCircleIcon className='h-5 w-5' />
-            <div>
-              <AlertTitle className='font-medium'>
-                Unable to process your request.
-              </AlertTitle>
-              <AlertDescription>
-                <p className='text-sm'>{errorMsg}</p>
-                <p className='text-sm'>Please check your Email and Password</p>
-              </AlertDescription>
-            </div>
-          </div>
-        </Alert>
-      ) : null}
 
       <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}

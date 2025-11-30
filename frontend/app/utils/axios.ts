@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { CONFIG } from 'app/config-global';
 import { STORAGE_KEY } from 'app/auth/context/constant';
-import { forgotPassword } from '~/auth/context';
+import { changePassword, forgotPassword } from '~/auth/context';
 
 // ----------------------------------------------------------------------
 
@@ -57,10 +57,11 @@ export const endpoints = {
     verify: '/user/verify',
     forgotPassword: '/user/forgot-password',
     verifyOtp: '/user/verify-otp/:email',
+    changePassword: '/user/change-password/:email',
     logout: '/user/logout',
   },
   content: {
     generate: '/app/generate',
-    status: (jobId: string) => `/app/status/${jobId}`,
+    status: (jobId: string) => `/app/job/${jobId}`,
   },
 };
