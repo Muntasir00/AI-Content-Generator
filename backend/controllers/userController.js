@@ -29,7 +29,7 @@ export const registerUser = async (req, res) => {
     });
     console.log('process.env.SECRET_KEY', process.env.SECRET_KEY);
     const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, {
-      expiresIn: '10m',
+      expiresIn: '10d',
     });
     verifyMail(token, email);
     newUser.token = token;
@@ -126,7 +126,7 @@ export const loginUser = async (req, res) => {
     if (user.isVerified !== true) {
       return res.status(403).json({
         success: false,
-        message: 'Verify your account than login',
+        message: 'Check your email,Verify your account then login',
       });
     }
 

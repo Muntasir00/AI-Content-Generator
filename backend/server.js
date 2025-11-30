@@ -3,6 +3,7 @@ import 'dotenv/config';
 import connectDB from './database/db.js';
 import cors from 'cors';
 import userRoute from './routes/userRoute.js';
+import contentRoutes from './routes/contentRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +15,7 @@ app.use(
   })
 );
 app.use('/user', userRoute);
+app.use('/app', contentRoutes);
 
 // http://localhost:8000/user/register
 
